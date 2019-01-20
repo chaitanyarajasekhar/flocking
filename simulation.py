@@ -1,5 +1,6 @@
 import os
 import argparse
+import json
 import time
 
 import numpy as np
@@ -28,6 +29,11 @@ def random_obstacle(position1, position2, r):
 def main():
     if not os.path.exists(ARGS.save_dir):
         os.makedirs(ARGS.save_dir)
+
+    with open(ARGS.config) as f:
+        model_config = json.load(f)
+
+    Boid.set_model(**model_config)
 
     region = (-100, 100, -100, 100)
 
@@ -82,7 +88,7 @@ def main():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--agents', type=int, default=100,
+    parser.add_argument('--agents', type=int, default=10,
                         help='number of agents')
     parser.add_argument('--obstacles', type=int, default=0,
                         help='number of obstacles')
@@ -96,6 +102,8 @@ if __name__ == '__main__':
                         help='number of simulation instances')
     parser.add_argument('--dt', type=float, default=0.1,
                         help='time resolution')
+    parser.add_argument('--config', type=str, default='config/default.json',
+                        help='path to config file')
     parser.add_argument('--save-dir', type=str,
                         help='name of the save directory')
     parser.add_argument('--prefix', type=str, default='',

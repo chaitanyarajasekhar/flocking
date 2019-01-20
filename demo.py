@@ -1,4 +1,5 @@
 import argparse
+import json
 import time
 
 import numpy as np
@@ -42,6 +43,11 @@ def animate(env, region):
 
 
 def main():
+    with open(ARGS.config) as f:
+        model_config = json.load(f)
+
+    Boid.set_model(**model_config)
+
     region = (-100, 100, -100, 100)
     env = Environment2D(region)
     for _ in range(ARGS.agents):
@@ -63,15 +69,17 @@ def main():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('--agents', type=int, default=100,
+    parser.add_argument('--agents', type=int, default=10,
                         help='number of agents')
-    parser.add_argument('--obstacles', type=int, default=2,
+    parser.add_argument('--obstacles', type=int, default=1,
                         help='number of obstacles')
-    parser.add_argument('--steps', type=int, default=1000,
+    parser.add_argument('--steps', type=int, default=200,
                         help='number of simulation steps')
-    parser.add_argument('--dt', type=float, default=0.1,
+    parser.add_argument('--dt', type=float, default=0.2,
                         help='time resolution')
-    parser.add_argument('--save-name', type=str,
+    parser.add_argument('--config', type=str, default='config/default.json',
+                        help='path to config file')
+    parser.add_argument('--save-name', type=str, default='demo',
                         help='name of the save file')
 
     ARGS = parser.parse_args()

@@ -3,6 +3,13 @@ import numpy as np
 
 class Boid:
     """Boid agent"""
+    model_config = {
+        "cohesion": 0.2,
+        "separation": 2,
+        "alignment": 0.2,
+        "obstacle_avoidance": 2,
+        "goal_steering": 0.5
+    }
 
     def __init__(self, ndim=None, vision=None, comfort=None,
                  max_speed=None, max_acceleration=None):
@@ -141,7 +148,7 @@ class Boid:
         # normal distance of obstacle to velocity, note that min_distance is obstacle's distance
         obstacle_direction = -obstacle.direction(self.position)
         sin_theta = np.linalg.norm(np.cross(self.direction, obstacle_direction))
-        normal_distance = min_distance * sin_theta
+        normal_distance = (min_distance + obstacle.size) * sin_theta - obstacle.size
         # Decide if self is on course of collision.
         if normal_distance < self.comfort:
             # normal direction away from obstacle
@@ -149,7 +156,7 @@ class Boid:
             turn_direction = self.direction * cos_theta - obstacle_direction
             turn_direction = turn_direction / np.linalg.norm(turn_direction)
             # Stronger the obstrution, stronger the turn.
-            return turn_direction * (self.comfort - normal_distance) ** 2
+            return turn_direction * (self.comfort - normal_distance) ** 2 / min_distance
 
         # Return 0 if obstacle does not obstruct.
         return np.zeros(self.ndim)
@@ -170,22 +177,16 @@ class Boid:
 
     def decide(self, goals):
         """Make decision for acceleration."""
-        c1 = 0.2
-        c2 = 1
-        c3 = 0.2
-        c4 = 2
-        g = 0.5
-
         goal_steering = np.zeros(self.ndim)
 
         for goal in goals:
             goal_steering += self._goal_seeking(goal) * goal.priority
 
-        self._acceleration = (c1 * self._cohesion() +
-                              c2 * self._seperation() +
-                              c3 * self._alignment() +
-                              c4 * self._obstacle_avoidance() +
-                              g * goal_steering)
+        self._acceleration = (self.model_config['cohesion'] * self._cohesion() +
+                              self.model_config['separation'] * self._seperation() +
+                              self.model_config['alignment'] * self._alignment() +
+                              self.model_config['obstacle_avoidance'] * self._obstacle_avoidance() +
+                              self.model_config['goal_steering'] * goal_steering)
 
     def _regularize(self):
         if self.max_speed:
@@ -203,3 +204,11 @@ class Boid:
         self._regularize()
 
         self._position += self._velocity * dt
+
+    @classmethod
+    def set_model(cls, cohesion, separation, alignment, obstacle_avoidance, goal_steering):
+        cls.model_config['cohesion'] = cohesion
+        cls.model_config['separation'] = separation
+        cls.model_config['alignment'] = alignment
+        cls.model_config['obstacle_avoidance'] = obstacle_avoidance
+        cls.model_config['goal_steering'] = goal_steering
