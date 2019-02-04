@@ -60,7 +60,7 @@ def main():
     env.add_goal(goal)
     # Create a sphere obstacle within in +/- 50 of goal's position.
     for _ in range(ARGS.obstacles):
-        sphere = Sphere(np.random.uniform(-40, 30, 2), 8, ndim=2)
+        sphere = Sphere(8, np.random.uniform(-40, 30, 2), ndim=2)
         env.add_obstacle(sphere)
 
     animate(env, region)

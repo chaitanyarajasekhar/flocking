@@ -2,12 +2,15 @@ import numpy as np
 
 
 class Obstacle:
-    def __init__(self, position, ndim=None):
+    def __init__(self, position, velocity=None, ndim=None):
         """Base class `Obstacle`."""
         self._ndim = ndim if ndim else 3
 
         self._position = np.zeros(self._ndim)
         self.position = position
+        self._velocity = np.zeros(self._ndim)
+        if velocity:
+            self.velocity = velocity
         self.size = 0
 
     @property
@@ -31,7 +34,7 @@ class Obstacle:
 
 
 class Wall(Obstacle):
-    def __init__(self, position, direction, ndim=None):
+    def __init__(self, direction, position, velocity=None, ndim=None):
         """
         A plane in space that repels free agents.
 
@@ -39,7 +42,7 @@ class Wall(Obstacle):
             position: the position of a point the wall passes.
             direction: the normal direction of the plane wall.
         """
-        super().__init__(position, ndim)
+        super().__init__(position, velocity, ndim)
 
         self._direction = np.array(direction, dtype=float)
         if self._direction.shape != (self._ndim,):
@@ -55,11 +58,11 @@ class Wall(Obstacle):
 
 
 class Sphere(Obstacle):
-    def __init__(self, position, size, ndim=None):
+    def __init__(self, size, position, velocity=None, ndim=None):
         """
         A sphere in ndim space.
         """
-        super().__init__(position, ndim)
+        super().__init__(position, velocity, ndim)
         self.size = size
 
     def distance(self, r):

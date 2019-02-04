@@ -14,10 +14,10 @@ class Environment2D:
         self.goals = []
 
         xmin, xmax, ymin, ymax = boundary
-        self.obstacles = [Wall((xmin, 0), (1, 0), ndim=2),
-                          Wall((xmax, 0), (-1, 0), ndim=2),
-                          Wall((0, ymin), (0, 1), ndim=2),
-                          Wall((0, ymax), (0, -1), ndim=2)]
+        self.obstacles = [Wall((1, 0), (xmin, 0), ndim=2),
+                          Wall((-1, 0), (xmax, 0), ndim=2),
+                          Wall((0, 1), (0, ymin), ndim=2),
+                          Wall((0, -1), (0, ymax), ndim=2)]
 
     def add_agent(self, agent):
         if not isinstance(agent, Boid):

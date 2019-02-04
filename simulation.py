@@ -23,7 +23,7 @@ def random_obstacle(position1, position2, r):
     true_x = x * cos + y * sin + position2[0]
     true_y = x * sin - y * cos + position2[1]
 
-    return Sphere([true_x, true_y], r, ndim=2)
+    return Sphere(r, [true_x, true_y], ndim=2)
 
 
 def main():
