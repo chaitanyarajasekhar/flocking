@@ -1,90 +1,15 @@
 import numpy as np
+from .agent import Agent
 
-
-class Boid:
+class Boid(Agent):
     """Boid agent"""
     model_config = {
         "cohesion": 0.2,
         "separation": 2,
         "alignment": 0.2,
-        "obstacle_avoidance": 2,
+        "obstacle_avoidance": 1,
         "goal_steering": 0.5
     }
-
-    def __init__(self, ndim=None, vision=None, comfort=None,
-                 max_speed=None, max_acceleration=None):
-        """
-        Create a boid with essential attributes.
-        `ndim`: dimension of the space it resides in.
-        `vision`: the visual range.
-        `anticipation`: range of anticipation for its own motion.
-        `comfort`: distance the agent wants to keep from other objects.
-        `max_speed`: max speed the agent can achieve.
-        `max_acceleratoin`: max acceleration the agent can achieve.
-        """
-        self._ndim = ndim if ndim else 3
-
-        self.vision = float(vision) if vision else np.inf
-        self.comfort = float(comfort) if comfort else 0.
-
-        # Max speed the boid can achieve.
-        self.max_speed = float(max_speed) if max_speed else None
-        self.max_acceleration = float(max_acceleration) if max_acceleration else None
-
-        self.neighbors = []
-        self.obstacles = []
-
-    def initialize(self, position, velocity):
-        """Initialize agent's spactial state."""
-        self._position = np.zeros(self._ndim)
-        self._velocity = np.zeros(self._ndim)
-        self._acceleration = np.zeros(self._ndim)
-
-        self._position[:] = position[:]
-        self._velocity[:] = velocity[:]
-
-    @property
-    def ndim(self):
-        return self._ndim
-
-    @property
-    def position(self):
-        return self._position
-
-    @property
-    def velocity(self):
-        return self._velocity
-
-    @property
-    def speed(self):
-        return np.linalg.norm(self.velocity)
-
-    @property
-    def direction(self):
-        return self.velocity / self.speed
-
-    def distance(self, other):
-        """Distance from the other objects."""
-        if isinstance(other, Boid):
-            return np.linalg.norm(self.position - other.position)
-        # If other is not a boid, let other tell the distance.
-        return other.distance(self.position)
-
-    def can_see(self, other):
-        """Whether the boid can see the other."""
-        return self.distance(other) < self.vision
-
-    def observe(self, environment):
-        """Observe the population and take note of neighbors."""
-        self.neighbors = [other for other in environment.population
-                          if self.can_see(other) and id(other) != id(self)]
-        # To simplify computation, it is assumed that agent is aware of all
-        # obstacles including the boundaries. In reality, the agent is only
-        # able to see the obstacle when it is in visual range. This doesn't
-        # affect agent's behavior, as agent only reacts to obstacles when in
-        # proximity, and no early planning by the agent is made.
-        self.obstacles = [obstacle for obstacle in environment.obstacles
-                          if self.can_see(obstacle)]
 
     def _cohesion(self):
         """Boids try to fly towards the center of neighbors."""
@@ -103,7 +28,7 @@ class Boid:
         repel = np.zeros(self._ndim)
         for neighbor in self.neighbors:
             distance = self.distance(neighbor)
-            if distance < self.comfort:
+            if distance < self.size:
                 # Divergence protection.
                 if distance < 0.01:
                     distance = 0.01
@@ -150,13 +75,13 @@ class Boid:
         sin_theta = np.linalg.norm(np.cross(self.direction, obstacle_direction))
         normal_distance = (min_distance + obstacle.size) * sin_theta - obstacle.size
         # Decide if self is on course of collision.
-        if normal_distance < self.comfort:
+        if normal_distance < self.size:
             # normal direction away from obstacle
             cos_theta = np.sqrt(1 - sin_theta * sin_theta)
             turn_direction = self.direction * cos_theta - obstacle_direction
             turn_direction = turn_direction / np.linalg.norm(turn_direction)
             # Stronger the obstrution, stronger the turn.
-            return turn_direction * (self.comfort - normal_distance)**2 / max(min_distance, self.comfort)
+            return turn_direction * (self.size - normal_distance)**2 / max(min_distance, self.size)
 
         # Return 0 if obstacle does not obstruct.
         return np.zeros(self.ndim)

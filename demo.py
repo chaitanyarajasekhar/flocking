@@ -4,7 +4,7 @@ import time
 
 import numpy as np
 
-from boids import *
+from classes import *
 
 
 def animate(env, region):
@@ -51,7 +51,7 @@ def main():
     region = (-100, 100, -100, 100)
     env = Environment2D(region)
     for _ in range(ARGS.agents):
-        boid = Boid(ndim=2, comfort=3, max_speed=10, max_acceleration=20)
+        boid = Boid(ndim=2, size=3, max_speed=10, max_acceleration=20)
         boid.initialize(np.random.uniform(10, 100, 2),
                         np.random.uniform(-15, 15, 2))
         env.add_agent(boid)

@@ -5,7 +5,7 @@ import time
 
 import numpy as np
 
-from boids import *
+from classes import *
 
 
 def random_obstacle(position1, position2, r):
@@ -49,7 +49,7 @@ def main():
 
         env = Environment2D(region)
         for _ in range(ARGS.agents):
-            boid = Boid(ndim=2, vision=ARGS.vision, comfort=ARGS.comfort,
+            boid = Boid(ndim=2, vision=ARGS.vision, size=ARGS.size,
                         max_speed=10, max_acceleration=20)
             boid.initialize(np.random.uniform(-80, 80, 2),
                             np.random.uniform(-15, 15, 2))
@@ -94,8 +94,8 @@ if __name__ == '__main__':
                         help='number of obstacles')
     parser.add_argument('--vision', type=float, default=None,
                         help='vision range to determine frequency of interaction')
-    parser.add_argument('--comfort', type=float, default=3,
-                        help='boid comfort zone size')
+    parser.add_argument('--size', type=float, default=3,
+                        help='boid size zone size')
     parser.add_argument('--steps', type=int, default=200,
                         help='number of simulation steps')
     parser.add_argument('--instances', type=int, default=1,
