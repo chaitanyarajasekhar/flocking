@@ -60,6 +60,16 @@ class Agent:
         # If other is not agent, let other tell the distance.
         return other.distance(self.position)
 
+    def _regularize(self):
+        if self.max_speed:
+            if self.speed > self.max_speed:
+                self._velocity = self._velocity / self.speed * self.max_speed
+
+        if self.max_acceleration:
+            acceleration = np.linalg.norm(self._acceleration)
+            if acceleration > self.max_acceleration:
+                self._acceleration = self._acceleration / acceleration * self.max_acceleration
+
     def can_see(self, other):
         """Whether the boid can see the other."""
         return self.distance(other) < self.vision

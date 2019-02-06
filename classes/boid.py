@@ -7,7 +7,7 @@ class Boid(Agent):
         "cohesion": 0.2,
         "separation": 2,
         "alignment": 0.2,
-        "obstacle_avoidance": 1,
+        "obstacle_avoidance": 2,
         "goal_steering": 0.5
     }
 
