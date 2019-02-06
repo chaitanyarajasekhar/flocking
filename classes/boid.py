@@ -113,16 +113,6 @@ class Boid(Agent):
                               self.model_config['obstacle_avoidance'] * self._obstacle_avoidance() +
                               self.model_config['goal_steering'] * goal_steering)
 
-    def _regularize(self):
-        if self.max_speed:
-            if self.speed > self.max_speed:
-                self._velocity = self._velocity / self.speed * self.max_speed
-
-        if self.max_acceleration:
-            acceleration = np.linalg.norm(self._acceleration)
-            if acceleration > self.max_acceleration:
-                self._acceleration = self._acceleration / acceleration * self.max_acceleration
-
     def move(self, dt):
         self._velocity += self._acceleration * dt
         # Velocity cap
