@@ -11,6 +11,6 @@ A simple implementation of Craig Reynolds' [Boids](https://www.red3d.com/cwr/boi
 
 ## Vicsek
 
-An implementation of [Helbing, Farkas, Vicsek](https://www.nature.com/articles/35035023) model. 
+An implementation of [Helbing - Farkas - Vicsek](https://www.nature.com/articles/35035023) model. 
 
 ![2D Flocking w/ Goal and Obstacle](demo/vicsek_goal_obstacle.gif)
