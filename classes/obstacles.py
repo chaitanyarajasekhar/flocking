@@ -25,6 +25,14 @@ class Obstacle:
     def position(self, position):
         self._position[:] = position[:]
 
+    @property
+    def velocity(self):
+        return self._velocity
+
+    @velocity.setter
+    def velocity(self, velocity):
+        self._velocity[:] = velocity[:]
+
     def distance(self, r):
         raise NotImplementedError()
 

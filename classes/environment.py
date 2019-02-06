@@ -1,7 +1,7 @@
 
 import numpy as np
 
-from .boid import Boid
+from .agent import Agent
 from .goals import Goal
 from .obstacles import Obstacle, Sphere, Wall
 
@@ -20,7 +20,7 @@ class Environment2D:
                           Wall((0, -1), (0, ymax), ndim=2)]
 
     def add_agent(self, agent):
-        if not isinstance(agent, Boid):
+        if not isinstance(agent, Agent):
             raise ValueError('agent must be an instance of Boid')
 
         if agent.ndim != 2:

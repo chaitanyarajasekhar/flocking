@@ -70,6 +70,13 @@ class Agent:
             if acceleration > self.max_acceleration:
                 self._acceleration = self._acceleration / acceleration * self.max_acceleration
 
+    def move(self, dt):
+        self._velocity += self._acceleration * dt
+        # Velocity cap
+        self._regularize()
+
+        self._position += self._velocity * dt
+
     def can_see(self, other):
         """Whether the boid can see the other."""
         return self.distance(other) < self.vision

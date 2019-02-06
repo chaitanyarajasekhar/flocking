@@ -3,7 +3,7 @@ from .agent import Agent
 
 class Boid(Agent):
     """Boid agent"""
-    model_config = {
+    config = {
         "cohesion": 0.2,
         "separation": 2,
         "alignment": 0.2,
@@ -107,23 +107,16 @@ class Boid(Agent):
         for goal in goals:
             goal_steering += self._goal_seeking(goal) * goal.priority
 
-        self._acceleration = (self.model_config['cohesion'] * self._cohesion() +
-                              self.model_config['separation'] * self._seperation() +
-                              self.model_config['alignment'] * self._alignment() +
-                              self.model_config['obstacle_avoidance'] * self._obstacle_avoidance() +
-                              self.model_config['goal_steering'] * goal_steering)
-
-    def move(self, dt):
-        self._velocity += self._acceleration * dt
-        # Velocity cap
-        self._regularize()
-
-        self._position += self._velocity * dt
+        self._acceleration = (self.config['cohesion'] * self._cohesion() +
+                              self.config['separation'] * self._seperation() +
+                              self.config['alignment'] * self._alignment() +
+                              self.config['obstacle_avoidance'] * self._obstacle_avoidance() +
+                              self.config['goal_steering'] * goal_steering)
 
     @classmethod
     def set_model(cls, cohesion, separation, alignment, obstacle_avoidance, goal_steering):
-        cls.model_config['cohesion'] = cohesion
-        cls.model_config['separation'] = separation
-        cls.model_config['alignment'] = alignment
-        cls.model_config['obstacle_avoidance'] = obstacle_avoidance
-        cls.model_config['goal_steering'] = goal_steering
+        cls.config['cohesion'] = cohesion
+        cls.config['separation'] = separation
+        cls.config['alignment'] = alignment
+        cls.config['obstacle_avoidance'] = obstacle_avoidance
+        cls.config['goal_steering'] = goal_steering

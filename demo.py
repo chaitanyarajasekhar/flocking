@@ -16,7 +16,7 @@ def animate(env, region):
     def animate(i, scat, env):
         env.update(ARGS.dt)
 
-        scat.set_offsets([boid.position for boid in env.population])
+        scat.set_offsets([agent.position for agent in env.population])
         return scat,
 
     xmin, xmax, ymin, ymax = region
@@ -43,18 +43,25 @@ def animate(env, region):
 
 
 def main():
+    if ARGS.model not in ('boid', 'vicsek'):
+        raise argparse.ArgumentTypeError('model must be one of ("boid", "viscek")')
+
     with open(ARGS.config) as f:
         model_config = json.load(f)
 
-    Boid.set_model(**model_config)
+    if ARGS.model == 'boid':
+        Boid.set_model(**model_config)
+        Model = Boid
+    elif ARGS.model == 'vicsek':
+        Model = Vicsek
 
     region = (-100, 100, -100, 100)
     env = Environment2D(region)
     for _ in range(ARGS.agents):
-        boid = Boid(ndim=2, size=3, max_speed=10, max_acceleration=20)
-        boid.initialize(np.random.uniform(10, 100, 2),
+        agent = Model(ndim=2, size=3, max_speed=10, max_acceleration=20)
+        agent.initialize(np.random.uniform(10, 100, 2),
                         np.random.uniform(-15, 15, 2))
-        env.add_agent(boid)
+        env.add_agent(agent)
 
     goal = Goal(np.random.uniform(-60, -40, 2), ndim=2)
     env.add_goal(goal)
@@ -69,6 +76,8 @@ def main():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
+    parser.add_argument('--model', type=str, default='boid',
+                        help='agent model')
     parser.add_argument('--agents', type=int, default=10,
                         help='number of agents')
     parser.add_argument('--obstacles', type=int, default=1,
