@@ -86,7 +86,7 @@ if __name__ == '__main__':
                         help='number of simulation steps')
     parser.add_argument('--dt', type=float, default=0.2,
                         help='time resolution')
-    parser.add_argument('--config', type=str, default='config/default.json',
+    parser.add_argument('--config', type=str, default='config/default_boid.json',
                         help='path to config file')
     parser.add_argument('--save-name', type=str, default='demo',
                         help='name of the save file')

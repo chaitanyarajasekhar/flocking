@@ -27,13 +27,20 @@ def random_obstacle(position1, position2, r):
 
 
 def main():
+    if ARGS.model not in ('boid', 'vicsek'):
+        raise argparse.ArgumentTypeError('model must be one of ("boid", "viscek")')
+
     if not os.path.exists(ARGS.save_dir):
         os.makedirs(ARGS.save_dir)
 
     with open(ARGS.config) as f:
         model_config = json.load(f)
 
-    Boid.set_model(**model_config)
+    if ARGS.model == 'boid':
+        Boid.set_model(**model_config)
+        Model = Boid
+    elif ARGS.model == 'vicsek':
+        Model = Vicsek
 
     region = (-100, 100, -100, 100)
 
@@ -49,16 +56,16 @@ def main():
 
         env = Environment2D(region)
         for _ in range(ARGS.agents):
-            boid = Boid(ndim=2, vision=ARGS.vision, size=ARGS.size,
+            agent = Model(ndim=2, vision=ARGS.vision, size=ARGS.size,
                         max_speed=10, max_acceleration=20)
-            boid.initialize(np.random.uniform(-80, 80, 2),
+            agent.initialize(np.random.uniform(-80, 80, 2),
                             np.random.uniform(-15, 15, 2))
-            env.add_agent(boid)
+            env.add_agent(agent)
 
         goal = Goal(np.random.uniform(-40, 40, 2), ndim=2)
         env.add_goal(goal)
         # Create a sphere obstacle near segment between avg boids position and goal position.
-        avg_boids_position = np.mean(np.vstack([boid.position for boid in env.population]), axis=0)
+        avg_boids_position = np.mean(np.vstack([agent.position for agent in env.population]), axis=0)
 
         spheres = []
         for _ in range(ARGS.obstacles):
@@ -72,10 +79,10 @@ def main():
             env.update(ARGS.dt)
             position_data.append([goal.position for goal in env.goals] +
                                  [sphere.position for sphere in spheres] +
-                                 [boid.position.copy() for boid in env.population])
+                                 [agent.position.copy() for agent in env.population])
             velocity_data.append([np.zeros(2) for goal in env.goals] +
                                  [np.zeros(2) for sphere in spheres] +
-                                 [boid.velocity.copy() for boid in env.population])
+                                 [agent.velocity.copy() for agent in env.population])
 
         position_data_all.append(position_data)
         velocity_data_all.append(velocity_data)
@@ -88,6 +95,8 @@ def main():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('--model', type=str, default='boid',
+                        help='agent model')
     parser.add_argument('--agents', type=int, default=10,
                         help='number of agents')
     parser.add_argument('--obstacles', type=int, default=0,
@@ -95,14 +104,14 @@ if __name__ == '__main__':
     parser.add_argument('--vision', type=float, default=None,
                         help='vision range to determine frequency of interaction')
     parser.add_argument('--size', type=float, default=3,
-                        help='boid size zone size')
+                        help='agent size zone size')
     parser.add_argument('--steps', type=int, default=200,
                         help='number of simulation steps')
     parser.add_argument('--instances', type=int, default=1,
                         help='number of simulation instances')
     parser.add_argument('--dt', type=float, default=0.1,
                         help='time resolution')
-    parser.add_argument('--config', type=str, default='config/default.json',
+    parser.add_argument('--config', type=str, default='config/default_boid.json',
                         help='path to config file')
     parser.add_argument('--save-dir', type=str,
                         help='name of the save directory')
