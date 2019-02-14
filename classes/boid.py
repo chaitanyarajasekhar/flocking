@@ -1,6 +1,7 @@
 import numpy as np
 from .agent import Agent
 
+
 class Boid(Agent):
     """Boid agent"""
     config = {
@@ -33,7 +34,8 @@ class Boid(Agent):
                 if distance < 0.01:
                     distance = 0.01
 
-                repel += (self.position - neighbor.position) / distance / distance
+                repel += (self.position - neighbor.position) / \
+                    distance / distance
                 # No averaging taken place.
                 # When two neighbors are in the same position, a stronger urge
                 # to move away is assumed, despite that distancing itself from
@@ -72,8 +74,10 @@ class Boid(Agent):
         obstacle = self.obstacles[closest]
         # normal distance of obstacle to velocity, note that min_distance is obstacle's distance
         obstacle_direction = -obstacle.direction(self.position)
-        sin_theta = np.linalg.norm(np.cross(self.direction, obstacle_direction))
-        normal_distance = (min_distance + obstacle.size) * sin_theta - obstacle.size
+        sin_theta = np.linalg.norm(
+            np.cross(self.direction, obstacle_direction))
+        normal_distance = (min_distance + obstacle.size) * \
+            sin_theta - obstacle.size
         # Decide if self is on course of collision.
         if normal_distance < self.size:
             # normal direction away from obstacle
@@ -81,7 +85,7 @@ class Boid(Agent):
             turn_direction = self.direction * cos_theta - obstacle_direction
             turn_direction = turn_direction / np.linalg.norm(turn_direction)
             # Stronger the obstrution, stronger the turn.
-            return turn_direction * (self.size - normal_distance)**2 / max(min_distance, self.size)
+            return turn_direction * ((self.size - normal_distance) / max(min_distance, self.size)) ** 2
 
         # Return 0 if obstacle does not obstruct.
         return np.zeros(self.ndim)

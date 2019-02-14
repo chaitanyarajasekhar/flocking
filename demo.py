@@ -32,7 +32,8 @@ def animate(env, region):
         ax.scatter(*goal.position, color='g')
     for obstacle in env.obstacles:
         if not isinstance(obstacle, Wall):
-            circle = plt.Circle(obstacle.position, obstacle.size, color='r', fill=False)
+            circle = plt.Circle(obstacle.position,
+                                obstacle.size, color='r', fill=False)
             ax.add_patch(circle)
 
     anim = animation.FuncAnimation(fig, animate,
@@ -44,7 +45,8 @@ def animate(env, region):
 
 def main():
     if ARGS.model not in ('boid', 'vicsek'):
-        raise argparse.ArgumentTypeError('model must be one of ("boid", "viscek")')
+        raise argparse.ArgumentTypeError(
+            'model must be one of ("boid", "viscek")')
 
     with open(ARGS.config) as f:
         model_config = json.load(f)
@@ -59,8 +61,8 @@ def main():
     env = Environment2D(region)
     for _ in range(ARGS.agents):
         agent = Model(ndim=2, size=3, max_speed=10, max_acceleration=20)
-        agent.initialize(np.random.uniform(10, 100, 2),
-                        np.random.uniform(-15, 15, 2))
+        agent.initialize(np.random.uniform(10, 80, 2),
+                         np.random.uniform(-15, 15, 2))
         env.add_agent(agent)
 
     goal = Goal(np.random.uniform(-60, -40, 2), ndim=2)
