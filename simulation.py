@@ -17,7 +17,7 @@ def random_obstacle(position1, position2, r):
 
     # Generat random x and y assuming d is aligned with x axis.
     x = np.random.uniform(2+r, d_len-r)
-    y = np.random.uniform(-r, r)
+    y = np.random.uniform(-2*r, 2*r)
 
     # Rotate the alignment back to the actural d.
     true_x = x * cos + y * sin + position2[0]
@@ -28,7 +28,8 @@ def random_obstacle(position1, position2, r):
 
 def main():
     if ARGS.model not in ('boid', 'vicsek'):
-        raise argparse.ArgumentTypeError('model must be one of ("boid", "viscek")')
+        raise argparse.ArgumentTypeError(
+            'model must be one of ("boid", "viscek")')
 
     if not os.path.exists(ARGS.save_dir):
         os.makedirs(ARGS.save_dir)
@@ -57,15 +58,16 @@ def main():
         env = Environment2D(region)
         for _ in range(ARGS.agents):
             agent = Model(ndim=2, vision=ARGS.vision, size=ARGS.size,
-                        max_speed=10, max_acceleration=20)
+                          max_speed=10, max_acceleration=20)
             agent.initialize(np.random.uniform(-80, 80, 2),
-                            np.random.uniform(-15, 15, 2))
+                             np.random.uniform(-15, 15, 2))
             env.add_agent(agent)
 
         goal = Goal(np.random.uniform(-40, 40, 2), ndim=2)
         env.add_goal(goal)
         # Create a sphere obstacle near segment between avg boids position and goal position.
-        avg_boids_position = np.mean(np.vstack([agent.position for agent in env.population]), axis=0)
+        avg_boids_position = np.mean(
+            np.vstack([agent.position for agent in env.population]), axis=0)
 
         spheres = []
         for _ in range(ARGS.obstacles):
@@ -89,8 +91,10 @@ def main():
 
     print('Simulations {0}/{0} completed.'.format(ARGS.instances))
 
-    np.save(os.path.join(ARGS.save_dir, ARGS.prefix+'_position.npy'), position_data_all)
-    np.save(os.path.join(ARGS.save_dir, ARGS.prefix+'_velocity.npy'), velocity_data_all)
+    np.save(os.path.join(ARGS.save_dir, ARGS.prefix +
+                         '_position.npy'), position_data_all)
+    np.save(os.path.join(ARGS.save_dir, ARGS.prefix +
+                         '_velocity.npy'), velocity_data_all)
 
 
 if __name__ == '__main__':
