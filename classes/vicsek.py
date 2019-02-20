@@ -2,6 +2,7 @@ import numpy as np
 from .agent import Agent
 from .obstacles import Obstacle
 
+
 class Vicsek(Agent):
     config = {
         'tau': 1.0,
@@ -23,10 +24,11 @@ class Vicsek(Agent):
         repulsion = self.config['A'] * np.exp((r - d) / self.config['B']) * n
         friction = 0
         if r > d:
-            repulsion += self.config['k'] * (r - d) * n # Body force.
+            repulsion += self.config['k'] * (r - d) * n  # Body force.
 
             delta_v = other.velocity - self.velocity
-            friction += self.config['kappa'] * (r - d) * (delta_v - np.dot(delta_v, n) * n)
+            friction += self.config['kappa'] * \
+                (r - d) * (delta_v - np.dot(delta_v, n) * n)
 
         return repulsion + friction
 
@@ -60,4 +62,10 @@ class Vicsek(Agent):
 
         self._acceleration[:] = interactions[:] + goal_steering[:]
 
-    
+    @classmethod
+    def set_model(cls, config):
+        cls.config['tau'] = config['tau']
+        cls.config['A'] = config['A']
+        cls.config['B'] = config['B']
+        cls.config['k'] = config['k']
+        cls.config['kappa'] = config['kappa']

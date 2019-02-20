@@ -85,7 +85,7 @@ class Boid(Agent):
             turn_direction = self.direction * cos_theta - obstacle_direction
             turn_direction = turn_direction / np.linalg.norm(turn_direction)
             # Stronger the obstrution, stronger the turn.
-            return turn_direction * ((self.size - normal_distance) / max(min_distance, self.size)) ** 2
+            return turn_direction * (self.size - normal_distance)**2 / max(min_distance, self.size)
 
         # Return 0 if obstacle does not obstruct.
         return np.zeros(self.ndim)
@@ -118,9 +118,9 @@ class Boid(Agent):
                               self.config['goal_steering'] * goal_steering)
 
     @classmethod
-    def set_model(cls, cohesion, separation, alignment, obstacle_avoidance, goal_steering):
-        cls.config['cohesion'] = cohesion
-        cls.config['separation'] = separation
-        cls.config['alignment'] = alignment
-        cls.config['obstacle_avoidance'] = obstacle_avoidance
-        cls.config['goal_steering'] = goal_steering
+    def set_model(cls, config):
+        cls.config['cohesion'] = config['cohesion']
+        cls.config['separation'] = config['separation']
+        cls.config['alignment'] = config['alignment']
+        cls.config['obstacle_avoidance'] = config['obstacle_avoidance']
+        cls.config['goal_steering'] = config['goal_steering']

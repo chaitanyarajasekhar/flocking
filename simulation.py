@@ -27,21 +27,16 @@ def random_obstacle(position1, position2, r):
 
 
 def main():
-    if ARGS.model not in ('boid', 'vicsek'):
-        raise argparse.ArgumentTypeError(
-            'model must be one of ("boid", "viscek")')
-
     if not os.path.exists(ARGS.save_dir):
         os.makedirs(ARGS.save_dir)
 
     with open(ARGS.config) as f:
         model_config = json.load(f)
 
-    if ARGS.model == 'boid':
-        Boid.set_model(**model_config)
-        Model = Boid
-    elif ARGS.model == 'vicsek':
-        Model = Vicsek
+    if ARGS.boids > 0:
+        Boid.set_model(model_config["boid"])
+    if ARGS.vicseks > 0:
+        Vicsek.set_model(model_config["vicsek"])
 
     region = (-100, 100, -100, 100)
 
@@ -56,9 +51,15 @@ def main():
             prev_time = time.time()
 
         env = Environment2D(region)
-        for _ in range(ARGS.agents):
-            agent = Model(ndim=2, vision=ARGS.vision, size=ARGS.size,
-                          max_speed=10, max_acceleration=20)
+        for _ in range(ARGS.boids):
+            agent = Boid(ndim=2, vision=ARGS.vision, size=ARGS.size,
+                         max_speed=10, max_acceleration=20)
+            agent.initialize(np.random.uniform(-80, 80, 2),
+                             np.random.uniform(-15, 15, 2))
+            env.add_agent(agent)
+        for _ in range(ARGS.vicseks):
+            agent = Vicsek(ndim=2, vision=ARGS.vision, size=ARGS.size,
+                           max_speed=10, max_acceleration=20)
             agent.initialize(np.random.uniform(-80, 80, 2),
                              np.random.uniform(-15, 15, 2))
             env.add_agent(agent)
@@ -99,23 +100,24 @@ def main():
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--model', type=str, default='boid',
-                        help='agent model')
-    parser.add_argument('--agents', type=int, default=10,
-                        help='number of agents')
+
+    parser.add_argument('--boids', type=int, default=10,
+                        help='number of boid agents')
+    parser.add_argument('--vicseks', type=int, default=0,
+                        help='number of vicsek agents')
     parser.add_argument('--obstacles', type=int, default=0,
                         help='number of obstacles')
     parser.add_argument('--vision', type=float, default=None,
-                        help='vision range to determine frequency of interaction')
+                        help='vision range to determine range of interaction')
     parser.add_argument('--size', type=float, default=3,
-                        help='agent size zone size')
+                        help='agent size')
     parser.add_argument('--steps', type=int, default=200,
                         help='number of simulation steps')
     parser.add_argument('--instances', type=int, default=1,
                         help='number of simulation instances')
     parser.add_argument('--dt', type=float, default=0.1,
                         help='time resolution')
-    parser.add_argument('--config', type=str, default='config/default_boid.json',
+    parser.add_argument('--config', type=str, default='config/default.json',
                         help='path to config file')
     parser.add_argument('--save-dir', type=str,
                         help='name of the save directory')
