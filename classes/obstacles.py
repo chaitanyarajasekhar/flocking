@@ -54,8 +54,7 @@ class Wall(Obstacle):
 
         self._direction = np.array(direction, dtype=float)
         if self._direction.shape != (self._ndim,):
-            raise ValueError(
-                'direction must be of shape ({},)'.format(self._ndim))
+            raise ValueError('direction must be of shape ({},)'.format(self._ndim))
         self._direction /= np.linalg.norm(self._direction)  # Normalization
 
     def distance(self, r):
@@ -83,3 +82,19 @@ class Sphere(Obstacle):
         """Direction of position `r` relative to obstacle surface"""
         d = r - self.position
         return d / np.linalg.norm(d)
+
+
+class Rectangle(Obstacle):
+    def __init__(self, sides, direction, position, velocity=None, ndim=None):
+        """
+        A generalized rectangle in ndim space.
+        """
+        super().__init__(position, velocity, ndim)
+
+        if len(sides) != self.ndim:
+            raise ValueError('number of side lengths does not match ndim')
+
+        self._direction = np.array(direction, dtype=float)
+        if self._direction.shape != (self._ndim,):
+            raise ValueError('direction must be of shape ({},)'.format(self._ndim))
+        self._direction /= np.linalg.norm(self._direction)  # Normalization
