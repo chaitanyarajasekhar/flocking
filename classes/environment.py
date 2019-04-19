@@ -1,7 +1,7 @@
 
 import numpy as np
 
-from .agent import Agent
+from .agents import Agent
 from .goals import Goal
 from .obstacles import Obstacle, Sphere, Wall
 
