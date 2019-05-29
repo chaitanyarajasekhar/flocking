@@ -46,10 +46,10 @@ class Environment2D:
         Update the state of environment for one time step dt, during which the
         boids move.
         """
-        for boid in self.population:
-            boid.observe(self)
-            boid.decide(self.goals)
+        for agent in self.population:
+            agent.observe(self)
+            agent.decide(self.goals)
         # Hold off moving agents until all have made decision.
         # This ensures synchronous update.
-        for boid in self.population:
-            boid.move(dt)
+        for agent in self.population:
+            agent.move(dt)
