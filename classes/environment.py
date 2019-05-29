@@ -21,7 +21,7 @@ class Environment2D:
 
     def add_agent(self, agent):
         if not isinstance(agent, Agent):
-            raise ValueError('agent must be an instance of Boid')
+            raise ValueError('agent must be an instance of Agent')
 
         if agent.ndim != 2:
             raise ValueError('position space of agent must be 2D')
